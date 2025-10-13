@@ -142,6 +142,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static/']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# Redirects
+
+LOGIN_REDIRECT_URL = 'home'
+
+LOGOUT_REDIRECT_URL = 'home'
+
+
 # Crispy Forms
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'tailwind'
