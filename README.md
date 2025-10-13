@@ -13,6 +13,7 @@
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
 </div>
@@ -31,9 +32,22 @@ SmartPracticeHub is a web-based problem bank for Mathematics and Science.
   - [Create & Activate Virtual Environment](#create--activate-a-virtual-environment)
   - [Install Dependencies](#install-dependencies)
   - [Go to Project Directory](#go-to-project-directory)
-  - [Apply Database Migrations When Necessary](#apply-database-migrations-when-necessary)
+  - [Apply Database Migrations If Necessary](#apply-database-migrations-if-necessary)
   - [Run the Development Server](#run-the-development-server)
 - [Team](#team)
+
+## Tech Stack
+
+### Frontend
+- **HTML5**
+- **CSS3**
+- **TailwindCSS**
+
+### Backend
+- **Django**
+- **Supabase**
+- **PostgreSQL**
+- **Python**
 
 ## Getting Started
 
@@ -68,7 +82,7 @@ SmartPracticeHub is a web-based problem bank for Mathematics and Science.
   (env) cd smart_practice_hub
 ```
 
-### Apply Database Migrations When Necessary
+### Apply Database Migrations If Necessary
 ```bash
   (env) py manage.py migrate
 ```
@@ -80,11 +94,11 @@ SmartPracticeHub is a web-based problem bank for Mathematics and Science.
 
 > Visit **http://127.0.0.1:8000/** in your browser.
 ## Team
-| Role | Name | GitHub |
-|---|---|---|
-| Product Owner | Francis Kyle G. Mahinay | [@M0BIUS1](https://www.github.com/M0BIUS1) |
-| Business Analyst | John Lloyd Maluto | [@skweks](https://www.github.com/skweks) |
-| Scrum Master | Andrei Sam P. Loy | [@Kitanoed](https://www.github.com/Kitanoed) |
-| Developer | Adrian Paul D. Gerbise | [@eidoru](https://www.github.com/eidoru) |
-| Developer | Xavier A. Fernandez | [@Xavier-XAF](https://github.com/Xavier-XAF) |
-| Developer | Chrisalin C. Gemparo | [@ChrisGemps](https://www.github.com/ChrisGemps) |
+| Role | Name | GitHub |  Email
+|---|---|---|---|
+| Product Owner | Francis Kyle G. Mahinay | [@M0BIUS1](https://www.github.com/M0BIUS1) |  franciskyle.mahinay@cit.edu  |
+| Business Analyst | John Lloyd Maluto | [@skweks](https://www.github.com/skweks) |  johnlloyd.maluto@cit.edu  |
+| Scrum Master | Andrei Sam P. Loy | [@Kitanoed](https://www.github.com/Kitanoed) |  andreisam.loy@cit.edu  |
+| Developer | Adrian Paul D. Gerbise | [@eidoru](https://www.github.com/eidoru) |  adrianpaul.gerbise@cit.edu  |
+| Developer | Xavier A. Fernandez | [@Xavier-XAF](https://github.com/Xavier-XAF) |  xavier.fernandez@cit.edu  |
+| Developer | Chrisalin C. Gemparo | [@ChrisGemps](https://www.github.com/ChrisGemps) |  chrisalin.gemparo@cit.edu  |
