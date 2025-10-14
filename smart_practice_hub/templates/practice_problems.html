@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Practice Problems{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="flex justify-between items-center px-8 py-4 bg-white shadow">
+    <h1 class="text-2xl font-bold">
+        <span class="text-sky-600">Smart</span> <span class="text-amber-600">Practice Hub</span>
+    </h1>
+    <div class="flex items-center gap-5">
+        <!-- go to View Progress -->
+        <a href="{% url 'my_progress' %}" class="text-sky-600 hover:text-sky-800 text-1xl" title="My Progress">
+        <span class="text-sky-600">        View</span> <span class="text-amber-600">Progress</span> 🎓
+        </a>
+        <!-- Logout -->
+        <button class="text-gray-700 hover:text-red-600 font-medium">Logout</button>
+    </div>
+</header>
+
+
+    <!-- Title -->
+    <section class="px-8 py-6">
+        <h2 class="text-xl font-semibold text-sky-700">Practice <span class="text-amber-600">Problems</span></h2>
+        <p class="text-gray-600">Choose from our curated collection of<span class="text-sky-700"> MATH</span> and<span class="text-amber-600"> SCIENCE</span> problems</p>
+    </section>
+
+    <!-- Filters -->
+    <div class="px-0 py-0">
+        <div class="flex flex-wrap gap-3 bg-white shadow mx-8 px-6 py-4 rounded-lg">
+            <input type="text" placeholder="Search problems..." class="flex-1 border border-gray-300 rounded-lg px-4 py-2" />
+            <select class="border border-gray-300 rounded-lg px-3 py-2">
+                <option>All Subjects</option>
+                <option>Mathematics</option>
+                <option>Science</option>
+            </select>
+            <select class="border border-gray-300 rounded-lg px-3 py-2">
+                <option>All Difficulties</option>
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+            </select>
+            <select class="border border-gray-300 rounded-lg px-3 py-2">
+                <option>All Status</option>
+                <option>Not Started</option>
+                <option>In Progress</option>
+                <option>Completed</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Problems List -->
+    <div class="space-y-6 px-8 py-8">
+        {% for problem in problems %}
+        <div class="bg-white shadow rounded-2xl p-6 flex justify-between items-center">
+            <div>
+                <h3 class="font-bold text-lg">{{ problem.title }}</h3>
+                <p class="text-gray-600">{{ problem.description|truncatechars:100 }}</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    {% for tag in problem.tags %}
+                    <span class="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded">{{ tag }}</span>
+                    {% endfor %}
+                    <span class="text-sm px-2 py-1 rounded 
+                        {% if problem.difficulty == 'Easy' %}bg-green-100 text-green-700
+                        {% elif problem.difficulty == 'Medium' %}bg-yellow-100 text-yellow-700
+                        {% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ problem.difficulty }}
+                    </span>
+                    <span class="text-sm bg-gray-200 text-gray-700 px-2 py-1 rounded">{{ problem.type }}</span>
+                </div>
+            </div>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Start Practice</button>
+        </div>
+        {% empty %}
+        <p class="text-gray-600">No problems found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
