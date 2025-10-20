@@ -31,3 +31,4 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     def get_short_name(self):
         return self.first_name or self.email
+
