@@ -5,16 +5,40 @@
 <div class="min-h-screen bg-gray-50">
     <!-- Header -->
     <header class="flex justify-between items-center px-8 py-4 bg-white shadow">
-    <h1 class="text-2xl font-bold">
-        <span class="text-sky-600">Smart</span> <span class="text-amber-600">Practice Hub</span>
-    </h1>
+    <a href="{% url 'home' %}" class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-2xl font-extrabold text-transparent hover:opacity-80 transition-opacity duration-200">
+   Smart Practice Hub
+</a>
     <div class="flex items-center gap-5">
         <!-- go to View Progress -->
-        <a href="{% url 'my_progress' %}" class="text-sky-600 hover:text-sky-800 text-1xl" title="My Progress">
-        <span class="text-sky-600">        View</span> <span class="text-amber-600">Progress</span> 🎓
-        </a>
-        <!-- Logout -->
-        <button class="text-gray-700 hover:text-red-600 font-medium">Logout</button>
+         <h2 class="text-md">🧑‍🎓 <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent">{{ user.first_name }}</span></h2>
+            <div class="h-6 border-l border-gray-300"></div>
+                <a href="{% url 'my_progress' %}" 
+                    class="group relative inline-flex items-center gap-1 text-sky-600 text-xl font-semibold transition-all duration-300 hover:text-sky-800 hover:scale-105"
+                title="My Progress">
+            <span class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-transparent group-hover:from-yellow-500 group-hover:to-blue-500 transition-all duration-300">
+        View Progress
+    </span>🎓
+</a>
+
+        
+    <div class="flex items-center space-x-4">
+    <!-- Divider -->
+        <div class="h-6 border-l border-gray-300"></div>
+        <!-- Logout Form -->
+        <form action="{% url 'logout' %}" method="post" class="flex items-center">
+            {% csrf_token %}
+            <button type="submit"
+                class="flex items-center gap-2 px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200">
+                <!-- Logout Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                    </svg>
+                    Logout
+                </button>
+            </form>
+        </div>
     </div>
 </header>
 

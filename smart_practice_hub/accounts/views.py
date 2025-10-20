@@ -21,6 +21,9 @@ class CustomLogoutView(LogoutView):
     next_page = reverse_lazy("home")
     from django.shortcuts import render
 
+def home(request):
+    return render(request, 'home.html')    
+
 def practice_problems(request):
     problems = [
         {
