@@ -1,4 +1,5 @@
 from django.urls import include, path
+from .views import CustomLoginView
 
 from . import views
 
@@ -10,4 +11,3 @@ urlpatterns = [
     path("practice/", views.practice_problems, name="practice_problems"),
     path("progress/", views.my_progress, name="my_progress"),
 ]
-

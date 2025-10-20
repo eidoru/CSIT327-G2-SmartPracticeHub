@@ -1,8 +1,9 @@
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.views import LogoutView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
+from django.contrib.auth.decorators import login_required
 
 from .forms import CustomUserCreationForm
 from .forms import CustomAuthenticationForm
