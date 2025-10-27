@@ -30,7 +30,9 @@ SECRET_KEY = 'django-insecure-87t0sbp^8=1yu0$ph($#z5-f&y)bx@=d-jg1^&_+gjma5z)@&_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "smartpracticehub.onrender.com",
+                 ]
 
 
 # Application definition
