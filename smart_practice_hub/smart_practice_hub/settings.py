@@ -31,6 +31,8 @@ SECRET_KEY = 'django-insecure-87t0sbp^8=1yu0$ph($#z5-f&y)bx@=d-jg1^&_+gjma5z)@&_
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
     "smartpracticehub.onrender.com",
     '127.0.0.1', 'localhost'
 ]
