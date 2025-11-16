@@ -78,21 +78,40 @@
             </div>
         </div>
 
-        <!-- Recent Activity -->
+            <!-- Problems with Progress -->
+    <div class="px-8 py-8">
         <div class="bg-white shadow rounded-2xl p-6">
-            <h3 class="font-semibold text-lg mb-4">Recent Activity</h3>
-            <div class="space-y-3">
-                {% for activity in recent_activity %}
-                <div class="flex items-start gap-3 border-b border-gray-100 pb-2">
-                    <div class="text-xl">{{ activity.icon }}</div>
-                    <div>
-                        <p class="font-medium">{{ activity.title }}</p>
-                        <p class="text-gray-500 text-sm">{{ activity.details }}</p>
+            <h3 class="font-semibold text-lg mb-4">Your Problem Progress</h3>
+            {% if user_progress %}
+                <div class="space-y-4">
+                    {% for progress in user_progress %}
+                    <div class="border rounded-xl p-4 flex justify-between items-center">
+                        <div class="flex-1">
+                            <h4 class="font-semibold">{{ progress.problem.title }}</h4>
+                            <p class="text-gray-500 text-sm">{{ progress.problem.subject }} • {{ progress.problem.topic }}</p>
+                            <div class="mt-2 flex gap-2">
+                                <span class="text-xs px-2 py-1 rounded 
+                                    {% if progress.status == 'completed' %}bg-green-100 text-green-700
+                                    {% elif progress.status == 'in_progress' %}bg-yellow-100 text-yellow-700
+                                    {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                    {{ progress.get_status_display }}
+                                </span>
+                                <span class="text-xs text-gray-500">Attempts: {{ progress.attempts }}</span>
+                                {% if progress.is_correct %}
+                                <span class="text-xs text-green-600">✓ Correct</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <a href="{% url 'practice_problems' %}" 
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                            {% if progress.status == 'completed' %}Review{% else %}Continue{% endif %}
+                        </a>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
+            {% else %}
+                <p class="text-gray-500 text-center py-8">No progress yet. Start practicing to track your progress!</p>
+            {% endif %}
         </div>
     </div>
-</div>
 {% endblock %}
