@@ -2,116 +2,244 @@
 {% block title %}My Progress{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
     <!-- Header -->
-    <header class="flex justify-between items-center px-8 py-4 bg-white shadow">
-    <a href="{% url 'home' %}" class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-2xl font-extrabold text-transparent hover:opacity-80 transition-opacity duration-200">
-   Smart Practice Hub
-</a>
-    <div class="flex items-center gap-5">
-        <!-- go to Practice Problems -->
-         <h2 class="text-md">🧑‍🎓 <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent">{{ user.first_name }}</span></h2>
-        <div class="h-6 border-l border-gray-300"></div>
-         <a href="{% url 'practice_problems' %}" 
+    <header class="flex justify-between items-center px-8 py-4 bg-white shadow-md">
+        <a href="{% url 'home' %}" class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-2xl font-extrabold text-transparent hover:opacity-80 transition-opacity duration-200">
+            Smart Practice Hub
+        </a>
+        <div class="flex items-center gap-5">
+            <h2 class="text-md">🧑‍🎓 <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent">{{ user.first_name }}</span></h2>
+            <div class="h-6 border-l border-gray-300"></div>
+            <a href="{% url 'practice_problems' %}" 
                 class="group relative inline-flex items-center gap-1 text-sky-600 text-xl font-semibold transition-all duration-300 hover:text-sky-800 hover:scale-105"
                 title="Practice Problems">
-            <span class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-transparent group-hover:from-yellow-500 group-hover:to-blue-500 transition-all duration-300">
-        Practice Problems
-    </span>🧠
-</a>
+                <span class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-transparent group-hover:from-yellow-500 group-hover:to-blue-500 transition-all duration-300">
+                    Practice Problems
+                </span>🧩
+            </a>
+            <div class="h-6 border-l border-gray-300"></div>
+            <form action="{% url 'logout' %}" method="post" class="flex items-center">
+                {% csrf_token %}
+                <button type="submit"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                    </svg>
+                    Logout
+                </button>
+            </form>
+        </div>
+    </header>
 
-        <!-- Logout -->
-        <div class="flex items-center space-x-4">
-    <!-- Divider -->
-    <div class="h-6 border-l border-gray-300"></div>
-    <!-- Logout Form -->
-    <form action="{% url 'logout' %}" method="post" class="flex items-center">
-        {% csrf_token %}
-        <button type="submit"
-            class="flex items-center gap-2 px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200">
-            <!-- Logout Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+    <!-- Title Section -->
+    <section class="px-8 py-8">
+        <div class="flex items-center gap-3 mb-2">
+            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
-            Logout
-        </button>
-    </form>
-</div>
-
-    </div>
-</header>
-    <!-- Title -->
-    <section class="px-8 py-6">
-        <h2 class="text-xl font-semibold text-sky-700">My <span class="text-amber-600">Progress</span></h2>
-        <p class="text-gray-600">Track your learning journey and achievements</p>
+            <h2 class="text-3xl font-bold text-gray-800">My <span class="text-indigo-600">Progress</span></h2>
+        </div>
+        <p class="text-gray-600 ml-11">Track your learning journey and achievements</p>
     </section>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 px-8">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 px-8 mb-8">
         {% for stat in stats %}
-        <div class="bg-white shadow rounded-2xl p-6 flex flex-col items-start">
-            <p class="text-gray-500 text-sm">{{ stat.label }}</p>
-            <p class="text-3xl font-bold mt-2">{{ stat.value }}</p>
-            <p class="text-gray-500 text-sm mt-1">{{ stat.subtext }}</p>
+        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
+            <div class="flex items-start justify-between mb-3">
+                <p class="text-gray-600 text-sm font-medium">{{ stat.label }}</p>
+                <div class="bg-indigo-100 rounded-full p-2">
+                    {% if forloop.counter == 1 %}
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    {% elif forloop.counter == 2 %}
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                        </svg>
+                    {% elif forloop.counter == 3 %}
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    {% else %}
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="text-4xl font-bold text-gray-800 mb-2">{{ stat.value }}</p>
+            <p class="text-gray-500 text-sm">{{ stat.subtext }}</p>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Quick Practice + Recent Activity -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-8 py-8">
-        <!-- Quick Practice -->
-        <div class="bg-white shadow rounded-2xl p-6 lg:col-span-2">
-            <h3 class="font-semibold text-lg mb-4">Quick Practice</h3>
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-8 pb-8">
+        
+        <!-- Quick Practice Section -->
+        <div class="bg-white shadow-lg rounded-2xl p-6 lg:col-span-2 border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-green-100 rounded-lg p-2">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl text-gray-800">Quick Practice</h3>
+            </div>
+            
+            {% if quick_practice %}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {% for subject in quick_practice %}
-                <div class="border rounded-xl p-4 flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold">{{ subject.name }}</p>
-                        <p class="text-gray-500 text-sm">{{ subject.problem_count }} problems available</p>
-                        <p class="text-gray-400 text-sm mt-1">Last practiced: {{ subject.last_practiced }}</p>
+                <div class="border-2 border-gray-200 rounded-xl p-5 hover:border-indigo-300 hover:shadow-md transition-all duration-200">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1">
+                            <p class="font-bold text-lg text-gray-800">{{ subject.name }}</p>
+                            <p class="text-indigo-600 text-sm font-medium mt-1">
+                                {{ subject.problem_count }} problem{% if subject.problem_count != 1 %}s{% endif %} available
+                            </p>
+                        </div>
                     </div>
-                    <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">Practice Now</button>
+                    <p class="text-gray-500 text-xs mb-4">
+                        <span class="inline-flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Last: {{ subject.last_practiced }}
+                        </span>
+                    </p>
+                    <a href="{% url 'practice_problems' %}" 
+                       class="block w-full text-center bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        Practice Now
+                    </a>
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-8">No subjects available for practice yet.</p>
+            {% endif %}
         </div>
 
-            <!-- Problems with Progress -->
-    <div class="px-8 py-8">
-        <div class="bg-white shadow rounded-2xl p-6">
-            <h3 class="font-semibold text-lg mb-4">Your Problem Progress</h3>
-            {% if user_progress %}
-                <div class="space-y-4">
-                    {% for progress in user_progress %}
-                    <div class="border rounded-xl p-4 flex justify-between items-center">
-                        <div class="flex-1">
-                            <h4 class="font-semibold">{{ progress.problem.title }}</h4>
-                            <p class="text-gray-500 text-sm">{{ progress.problem.subject }} • {{ progress.problem.topic }}</p>
-                            <div class="mt-2 flex gap-2">
-                                <span class="text-xs px-2 py-1 rounded 
-                                    {% if progress.status == 'completed' %}bg-green-100 text-green-700
-                                    {% elif progress.status == 'in_progress' %}bg-yellow-100 text-yellow-700
-                                    {% else %}bg-gray-100 text-gray-700{% endif %}">
-                                    {{ progress.get_status_display }}
-                                </span>
-                                <span class="text-xs text-gray-500">Attempts: {{ progress.attempts }}</span>
-                                {% if progress.is_correct %}
-                                <span class="text-xs text-green-600">✓ Correct</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <a href="{% url 'practice_problems' %}" 
-                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-                            {% if progress.status == 'completed' %}Review{% else %}Continue{% endif %}
-                        </a>
-                    </div>
-                    {% endfor %}
+        <!-- Recent Activity -->
+        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-blue-100 rounded-lg p-2">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
                 </div>
+                <h3 class="font-bold text-xl text-gray-800">Recent Activity</h3>
+            </div>
+            
+            {% if recent_sessions %}
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+                {% for session in recent_sessions %}
+                <div class="border-l-4 {% if session.was_correct %}border-green-500{% else %}border-red-500{% endif %} pl-4 py-2 hover:bg-gray-50 rounded-r transition">
+                    <p class="font-medium text-sm text-gray-800">{{ session.problem.title }}</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        {% if session.was_correct %}
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">✓ Correct</span>
+                        {% else %}
+                        <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">✗ Incorrect</span>
+                        {% endif %}
+                        <span class="text-xs text-gray-500">{{ session.started_at|timesince }} ago</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
             {% else %}
-                <p class="text-gray-500 text-center py-8">No progress yet. Start practicing to track your progress!</p>
+            <p class="text-gray-500 text-center py-8 text-sm">No recent activity</p>
             {% endif %}
         </div>
     </div>
+
+    <!-- Problems with Progress -->
+    <div class="px-8 pb-8">
+        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-purple-100 rounded-lg p-2">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-xl text-gray-800">Your Problem Progress</h3>
+                </div>
+            </div>
+            
+            {% if user_progress %}
+            <div class="space-y-4">
+                {% for progress in user_progress %}
+                <div class="border-2 border-gray-200 rounded-xl p-5 hover:border-indigo-300 hover:shadow-md transition-all duration-200">
+                    <div class="flex justify-between items-start gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 mt-1">
+                                    {% if progress.is_correct %}
+                                    <div class="bg-green-100 rounded-full p-2">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    {% else %}
+                                    <div class="bg-gray-100 rounded-full p-2">
+                                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-lg text-gray-800">{{ progress.problem.title }}</h4>
+                                    <p class="text-gray-600 text-sm mt-1">
+                                        {{ progress.problem.subject }} • {{ progress.problem.topic }} • {{ progress.problem.points }} pts
+                                    </p>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <span class="inline-flex items-center text-xs px-3 py-1 rounded-full font-medium
+                                            {% if progress.status == 'completed' %}bg-green-100 text-green-700
+                                            {% elif progress.status == 'in_progress' %}bg-yellow-100 text-yellow-700
+                                            {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                            {{ progress.get_status_display }}
+                                        </span>
+                                        <span class="inline-flex items-center text-xs px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
+                                            {{ progress.attempts }} attempt{% if progress.attempts != 1 %}s{% endif %}
+                                        </span>
+                                        {% if progress.is_correct %}
+                                        <span class="inline-flex items-center text-xs px-3 py-1 rounded-full bg-green-100 text-green-700 font-medium">
+                                            ✓ Correct
+                                        </span>
+                                        {% endif %}
+                                        <span class="text-xs text-gray-500 px-2 py-1">
+                                            {{ progress.last_attempted_at|timesince }} ago
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{% url 'answer_problem' progress.problem.id %}" 
+                           class="flex-shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-md">
+                            {% if progress.status == 'completed' %}Review{% else %}Continue{% endif %}
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <p class="text-gray-500 text-lg mb-4">No progress yet. Start practicing to track your progress!</p>
+                <a href="{% url 'practice_problems' %}" 
+                   class="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                    Start Practicing
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

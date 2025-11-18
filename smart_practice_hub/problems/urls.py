@@ -12,5 +12,6 @@ urlpatterns = [
     path('api/problems/<int:id>/delete/', views.delete_problem_api, name='delete_problem_api'),
 
     path('<int:id>/answer/', views.answer_problem, name='answer_problem'),
-
+    path('my-progress/', views.my_progress, name='my_progress'),
+    path('problems/<int:id>/answer/', views.answer_problem, name='answer_problem'),
 ]

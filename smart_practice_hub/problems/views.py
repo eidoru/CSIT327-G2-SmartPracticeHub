@@ -5,11 +5,13 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.db.models import Count, Avg
 import json
+
+from django.utils import timezone
+from .models import Problem, ProblemProgress, PracticeSession
 from .forms import ProblemForm
-from .models import Problem
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Problem
 
 
 
@@ -229,12 +231,133 @@ def answer_problem(request, id):
         # Compare answer (case-insensitive and stripped)
         is_correct = student_answer.strip().lower() == problem.solution.strip().lower()
 
+        # Get or create ProblemProgress record
+        progress, created = ProblemProgress.objects.get_or_create(
+            student=request.user,
+            problem=problem
+        )
+        
+        # Update progress
+        progress.student_answer = student_answer
+        progress.is_correct = is_correct
+        progress.attempts += 1
+        progress.status = 'completed' if is_correct else 'in_progress'
+        
+        if is_correct:
+            from django.utils import timezone
+            progress.completed_at = timezone.now()
+        
+        progress.save()
+        
+        # Create a PracticeSession record
+        PracticeSession.objects.create(
+            user=request.user,
+            problem=problem,
+            was_correct=is_correct,
+            answer_given=student_answer
+        )
+
         if is_correct:
             messages.success(request, "Correct! 🎉 Great job!")
-            # Optional: You could track this correct answer in a database
         else:
             messages.error(request, "Incorrect ❌ Try again!")
 
         return render(request, "problems/answer_problem.html", context)
 
     return render(request, "problems/answer_problem.html", context)
+
+
+@login_required
+def my_progress(request):
+    """Display user's practice progress and statistics"""
+    
+    user = request.user
+    
+    # Get all progress records for this user
+    user_progress = ProblemProgress.objects.filter(
+        student=user
+    ).select_related('problem').order_by('-last_attempted_at')
+    
+    # Calculate statistics
+    total_attempted = user_progress.count()
+    total_completed = user_progress.filter(status='completed', is_correct=True).count()
+    in_progress = user_progress.filter(status='in_progress').count()
+    total_problems = Problem.objects.count()
+    
+    # Calculate completion percentage
+    completion_percentage = (total_completed / total_problems * 100) if total_problems > 0 else 0
+    
+    # Calculate total points earned
+    completed_problems = user_progress.filter(is_correct=True).select_related('problem')
+    total_points = sum(p.problem.points for p in completed_problems)
+    
+    # Get subject-wise breakdown
+    subject_stats = user_progress.filter(is_correct=True).values(
+        'problem__subject'
+    ).annotate(
+        count=Count('id')
+    ).order_by('-count')
+    
+    # Calculate average attempts
+    avg_attempts = user_progress.aggregate(
+        avg=Avg('attempts')
+    )['avg'] or 0
+    
+    # Stats cards data
+    stats = [
+        {
+            'label': 'Problems Solved',
+            'value': total_completed,
+            'subtext': f'{completion_percentage:.1f}% of all problems'
+        },
+        {
+            'label': 'Total Points',
+            'value': total_points,
+            'subtext': 'Points earned'
+        },
+        {
+            'label': 'In Progress',
+            'value': in_progress,
+            'subtext': 'Problems attempted'
+        },
+        {
+            'label': 'Average Attempts',
+            'value': f'{avg_attempts:.1f}',
+            'subtext': 'Per problem'
+        }
+    ]
+    
+    # Quick practice suggestions - subjects with available problems
+    quick_practice = []
+    for subject, _ in Problem.SUBJECT_CHOICES:
+        problems_count = Problem.objects.filter(subject=subject).count()
+        solved_count = user_progress.filter(
+            problem__subject=subject,
+            is_correct=True
+        ).count()
+        
+        last_practiced = user_progress.filter(
+            problem__subject=subject
+        ).order_by('-last_attempted_at').first()
+        
+        if problems_count > 0:
+            quick_practice.append({
+                'name': subject,
+                'problem_count': problems_count - solved_count,
+                'last_practiced': last_practiced.last_attempted_at.strftime('%b %d, %Y') if last_practiced else 'Never'
+            })
+    
+    # Recent activity - last 10 practice sessions
+    recent_sessions = PracticeSession.objects.filter(
+        user=user
+    ).select_related('problem').order_by('-started_at')[:10]
+    
+    context = {
+        'stats': stats,
+        'user_progress': user_progress[:10],  # Show last 10
+        'quick_practice': quick_practice,
+        'recent_sessions': recent_sessions,
+        'subject_stats': subject_stats,
+    }
+    
+    return render(request, 'my_progress.html', context)

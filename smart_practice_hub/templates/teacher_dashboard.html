@@ -139,13 +139,13 @@
 
                                         <!-- Corrected Delete button -->
                                         <form action="{% url 'delete_problem' problem.id %}" method="post"
-                                        onsubmit="return confirm('Are you sure you want to delete this problem?');">
-                                {% csrf_token %}
-                                <button type="submit"
-                                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg w-full transition-all duration-200">
-                                    🗑 Delete
-                                </button>
-                            </form>
+                                              onsubmit="return confirm('Are you sure you want to delete this problem?');">
+                                            {% csrf_token %}
+                                            <button type="submit"
+                                                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg w-full transition-all duration-200">
+                                                🗑 Delete
+                                            </button>
+                                        </form>
                                     </div>
 
                                 </div>
