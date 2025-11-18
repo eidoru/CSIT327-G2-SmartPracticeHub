@@ -6,6 +6,7 @@ from django.views.generic import CreateView
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django.db import models
 from problems.models import Problem
 from problems.models import Problem, ProblemProgress
 from django.utils import timezone
@@ -177,19 +178,65 @@ def teacher_dashboard(request):
     if request.user.role != 'teacher':
         raise PermissionDenied("Only teachers can access the teacher dashboard.")
     
+    from django.db.models import Count, Avg
+    
     # Get statistics for the dashboard
     total_problems = Problem.objects.count()
     math_problems = Problem.objects.filter(subject='Math').count()
     science_problems = Problem.objects.filter(subject='Science').count()
     
+    # Get difficulty breakdown
+    easy_problems = Problem.objects.filter(difficulty='Easy').count()
+    medium_problems = Problem.objects.filter(difficulty='Medium').count()
+    hard_problems = Problem.objects.filter(difficulty='Hard').count()
+    
     # Get recent problems
     recent_problems = Problem.objects.order_by('-created_at')[:5]
+    
+    # Get problem performance statistics
+    problem_stats = []
+    for problem in Problem.objects.all():
+        total_attempts = ProblemProgress.objects.filter(problem=problem).count()
+        correct_attempts = ProblemProgress.objects.filter(problem=problem, is_correct=True).count()
+        success_rate = (correct_attempts / total_attempts * 100) if total_attempts > 0 else 0
+        
+        problem_stats.append({
+            'problem': problem,
+            'total_attempts': total_attempts,
+            'correct_attempts': correct_attempts,
+            'success_rate': f'{success_rate:.1f}%',
+            'avg_attempts': ProblemProgress.objects.filter(problem=problem).aggregate(Avg('attempts'))['attempts__avg'] or 0,
+        })
+    
+    # Get engagement statistics
+    total_students = ProblemProgress.objects.values('student').distinct().count()
+    total_attempts = ProblemProgress.objects.count()
+    avg_success_rate = (ProblemProgress.objects.filter(is_correct=True).count() / total_attempts * 100) if total_attempts > 0 else 0
+    
+    # Get most attempted problems
+    most_attempted = Problem.objects.annotate(
+        attempt_count=Count('progress')
+    ).order_by('-attempt_count')[:3]
+    
+    # Get most successful problems
+    most_successful = Problem.objects.annotate(
+        success_count=Count('progress', filter=models.Q(progress__is_correct=True))
+    ).order_by('-success_count')[:3]
     
     context = {
         'total_problems': total_problems,
         'math_problems': math_problems,
         'science_problems': science_problems,
+        'easy_problems': easy_problems,
+        'medium_problems': medium_problems,
+        'hard_problems': hard_problems,
         'recent_problems': recent_problems,
+        'problem_stats': problem_stats,
+        'total_students': total_students,
+        'total_attempts': total_attempts,
+        'avg_success_rate': f'{avg_success_rate:.1f}%',
+        'most_attempted': most_attempted,
+        'most_successful': most_successful,
     }
     
     return render(request, "teacher_dashboard.html", context)
