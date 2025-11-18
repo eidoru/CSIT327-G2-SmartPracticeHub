@@ -1,19 +1,35 @@
+# from django import forms
+# from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+# from .models import CustomUser
+
+# class CustomUserCreationForm(UserCreationForm):
+#     class Meta:
+#         model = CustomUser
+#         fields = ('email', 'first_name', 'last_name', 'role')
+
+# class CustomUserChangeForm(UserChangeForm):
+#     class Meta:
+#         model = CustomUser
+#         fields = ('email', 'first_name', 'last_name', 'role', 'is_active', 'is_active')
+
+# class CustomAuthenticationForm(AuthenticationForm):
+#     username = forms.EmailField(
+#         label="Email",
+#         widget=forms.EmailInput(attrs={"autofocus": True})
+#     )
+
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
-from .models import CustomUser
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 
-class CustomUserCreationForm(UserCreationForm):
+from .models import User
+
+
+class AccountCreationForm(UserCreationForm):
     class Meta:
-        model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'role')
+        model = User
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2', 'role']
 
-class CustomUserChangeForm(UserChangeForm):
-    class Meta:
-        model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'role', 'is_active', 'is_active')
 
-class CustomAuthenticationForm(AuthenticationForm):
-    username = forms.EmailField(
-        label="Email",
-        widget=forms.EmailInput(attrs={"autofocus": True})
-    )
+class AccountLoginForm(AuthenticationForm):
+    username = forms.EmailField(label='Email')

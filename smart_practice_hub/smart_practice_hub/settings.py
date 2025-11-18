@@ -34,7 +34,6 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "smartpracticehub.onrender.com",
-    
 ]
 
 
@@ -47,10 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
-    'crispy_tailwind',
-    'accounts',
-    'problems'
+    'accounts.apps.AccountsConfig',
+    'problems.apps.ProblemsConfig',
+    'practice.apps.PracticeConfig',
 ]
 
 MIDDLEWARE = [
@@ -116,8 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
@@ -140,23 +136,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [BASE_DIR / 'static/']
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Redirects
-
-LOGIN_REDIRECT_URL = 'home'
-
-LOGOUT_REDIRECT_URL = 'home'
-
-
-# Crispy Forms
-
-CRISPY_ALLOWED_TEMPLATE_PACKS = 'tailwind'
-
-CRISPY_TEMPLATE_PACK = 'tailwind'
+AUTH_USER_MODEL = 'accounts.User'
