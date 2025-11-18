@@ -28,8 +28,62 @@ class Problem(models.Model):
     # created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='problems')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ['title', 'subject', 'topic']
+        indexes = [
+            models.Index(fields=['subject', 'difficulty']),
+            models.Index(fields=['topic']),
+        ]
+
     def __str__(self):
         return f"{self.title} ({self.subject})"
+    
+    def clean(self):
+        """Validate problem data before saving"""
+        from django.core.exceptions import ValidationError
+        
+        # Check for empty fields
+        if not self.title or not self.title.strip():
+            raise ValidationError({'title': 'Problem title cannot be empty.'})
+        
+        if not self.problem_text or not self.problem_text.strip():
+            raise ValidationError({'problem_text': 'Problem text cannot be empty.'})
+        
+        if not self.solution or not self.solution.strip():
+            raise ValidationError({'solution': 'Solution cannot be empty.'})
+        
+        if not self.topic or not self.topic.strip():
+            raise ValidationError({'topic': 'Topic cannot be empty.'})
+        
+        # Validate points
+        if self.points <= 0:
+            raise ValidationError({'points': 'Points must be a positive number.'})
+        
+        if self.points > 1000:
+            raise ValidationError({'points': 'Points cannot exceed 1000.'})
+        
+        # Check for duplicate based on title, subject, and topic
+        duplicate = Problem.objects.filter(
+            title__iexact=self.title.strip(),
+            subject=self.subject,
+            topic__iexact=self.topic.strip()
+        ).exclude(pk=self.pk)
+        
+        if duplicate.exists():
+            raise ValidationError(
+                f'A problem with the title "{self.title}" already exists for {self.subject} - {self.topic}. '
+                'Please use a different title or modify the topic.'
+            )
+    
+    def save(self, *args, **kwargs):
+        """Clean data before saving"""
+        self.clean()
+        # Strip whitespace from text fields
+        self.title = self.title.strip() if self.title else ''
+        self.topic = self.topic.strip() if self.topic else ''
+        self.problem_text = self.problem_text.strip() if self.problem_text else ''
+        self.solution = self.solution.strip() if self.solution else ''
+        super().save(*args, **kwargs)
 
 # Add this to your models.py file
 class ProblemProgress(models.Model):
