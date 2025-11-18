@@ -117,10 +117,11 @@
                         {% endif %}
                     </div>
                 </div>
-                <a href="{% url 'practice_problems' %}" 
-                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg ml-4 transition-all duration-200">
+                <a href="{% url 'answer_problem' problem.id %}" 
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg ml-4 transition-all duration-200">
                     {% if problem.status == 'completed' %}Review{% else %}Start Practice{% endif %}
                 </a>
+
             </div>
             {% empty %}
             <div class="text-center py-12">

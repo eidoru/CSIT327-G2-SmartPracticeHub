@@ -10,4 +10,7 @@ urlpatterns = [
     path('api/create/', views.create_problem_api, name='create_problem_api'),
     path('api/problems/<int:id>/update/', views.update_problem_api, name='update_problem_api'),
     path('api/problems/<int:id>/delete/', views.delete_problem_api, name='delete_problem_api'),
+
+    path('<int:id>/answer/', views.answer_problem, name='answer_problem'),
+
 ]
