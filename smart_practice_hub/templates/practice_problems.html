@@ -68,26 +68,41 @@
 
     <!-- Filters -->
     <div class="px-0 py-0">
-        <div class="flex flex-wrap gap-3 bg-white shadow mx-8 px-6 py-4 rounded-lg">
-            <input type="text" placeholder="Search problems..." class="flex-1 border border-gray-300 rounded-lg px-4 py-2" />
-            <select class="border border-gray-300 rounded-lg px-3 py-2">
-                <option>All Subjects</option>
-                <option>Mathematics</option>
-                <option>Science</option>
+        <form method="GET" class="flex flex-wrap gap-3 bg-white shadow mx-8 px-6 py-4 rounded-lg">
+            <input type="text" name="search" placeholder="Search problems..." 
+                   class="flex-1 border border-gray-300 rounded-lg px-4 py-2"
+                   value="{{ request.GET.search }}" />
+            
+            <select name="subject" class="border border-gray-300 rounded-lg px-3 py-2">
+                <option value="">All Subjects</option>
+                <option value="Math" {% if request.GET.subject == 'Math' %}selected{% endif %}>Math</option>
+                <option value="Science" {% if request.GET.subject == 'Science' %}selected{% endif %}>Science</option>
             </select>
-            <select class="border border-gray-300 rounded-lg px-3 py-2">
-                <option>All Difficulties</option>
-                <option>Easy</option>
-                <option>Medium</option>
-                <option>Hard</option>
+            
+            <select name="difficulty" class="border border-gray-300 rounded-lg px-3 py-2">
+                <option value="">All Difficulties</option>
+                <option value="Easy" {% if request.GET.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                <option value="Medium" {% if request.GET.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="Hard" {% if request.GET.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
             </select>
-            <select class="border border-gray-300 rounded-lg px-3 py-2">
-                <option>All Status</option>
-                <option>Not Started</option>
-                <option>In Progress</option>
-                <option>Completed</option>
+            
+            <select name="status" class="border border-gray-300 rounded-lg px-3 py-2">
+                <option value="">All Status</option>
+                <option value="not_started" {% if request.GET.status == 'not_started' %}selected{% endif %}>Not Started</option>
+                <option value="in_progress" {% if request.GET.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Completed</option>
             </select>
-        </div>
+            
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-200 font-medium">
+                Search
+            </button>
+            
+            {% if request.GET.search or request.GET.subject or request.GET.difficulty or request.GET.status %}
+            <a href="{% url 'practice_problems' %}" class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-2 rounded-lg transition-all duration-200 font-medium">
+                Clear Filters
+            </a>
+            {% endif %}
+        </form>
     </div>
 
         <!-- Problems List -->

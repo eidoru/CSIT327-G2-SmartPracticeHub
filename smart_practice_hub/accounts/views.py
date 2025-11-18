@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from problems.models import Problem
 from problems.models import Problem, ProblemProgress
 from django.utils import timezone
@@ -43,15 +44,43 @@ def practice_problems(request):
     # Get all problems from database
     problems = Problem.objects.all().order_by('-created_at')
 
+    # Apply search filter
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        problems = problems.filter(
+            Q(title__icontains=search_query) | 
+            Q(problem_text__icontains=search_query) |
+            Q(topic__icontains=search_query)
+        )
+    
+    # Apply subject filter
+    subject_filter = request.GET.get('subject', '').strip()
+    if subject_filter:
+        problems = problems.filter(subject=subject_filter)
+    
+    # Apply difficulty filter
+    difficulty_filter = request.GET.get('difficulty', '').strip()
+    if difficulty_filter:
+        problems = problems.filter(difficulty=difficulty_filter)
+
     user_progress = {}
     if request.user.is_authenticated:
         # Both students and teachers can have progress
         progress_records = ProblemProgress.objects.filter(student=request.user)
         user_progress = {p.problem_id: p.status for p in progress_records}
     
+    # Apply status filter
+    status_filter = request.GET.get('status', '').strip()
+    
     # Convert to format expected by template
     problems_list = []
     for problem in problems:
+        progress_status = user_progress.get(problem.id, 'not_started')
+        
+        # Apply status filter
+        if status_filter and progress_status != status_filter:
+            continue
+        
         problems_list.append({
             "id": problem.id,
             "title": problem.title,
@@ -62,8 +91,9 @@ def practice_problems(request):
             "subject": problem.subject,
             "topic": problem.topic,
             "points": problem.points,
-            "status": user_progress.get(problem.id, 'not_started'),
+            "status": progress_status,
         })
+    
     return render(request, "practice_problems.html", {"problems": problems_list})
 
 @login_required
