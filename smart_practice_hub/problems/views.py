@@ -204,3 +204,37 @@ def delete_problem(request, id):
     # If someone tries to GET this URL
     return redirect('teacher_dashboard')
 
+#Answering Problems
+@login_required
+def answer_problem(request, id):
+    problem = get_object_or_404(Problem, id=id)
+    
+    context = {
+        "problem": problem,
+        "student_answer": "",
+        "show_solution": False
+    }
+
+    if request.method == "POST":
+        # Check if user wants to see solution
+        if request.POST.get("show_solution"):
+            context["show_solution"] = True
+            messages.info(request, "Here's the solution for reference.")
+            return render(request, "problems/answer_problem.html", context)
+        
+        # Normal answer submission
+        student_answer = request.POST.get("answer", "")
+        context["student_answer"] = student_answer
+
+        # Compare answer (case-insensitive and stripped)
+        is_correct = student_answer.strip().lower() == problem.solution.strip().lower()
+
+        if is_correct:
+            messages.success(request, "Correct! 🎉 Great job!")
+            # Optional: You could track this correct answer in a database
+        else:
+            messages.error(request, "Incorrect ❌ Try again!")
+
+        return render(request, "problems/answer_problem.html", context)
+
+    return render(request, "problems/answer_problem.html", context)
