@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db import models
+from django.core.paginator import Paginator
 from problems.models import Problem
 from problems.models import Problem, ProblemProgress
 from django.utils import timezone
@@ -43,7 +44,9 @@ def home(request):
 @login_required
 def practice_problems(request):
     # Get all problems from database
-    problems = Problem.objects.all().order_by('-created_at')
+    problems = Problem.objects.all().only(
+        'id', 'title', 'problem_text', 'subject', 'topic', 'difficulty', 'points'
+    ).order_by('-created_at')
 
     # Apply search filter
     search_query = request.GET.get('search', '').strip()
@@ -95,7 +98,21 @@ def practice_problems(request):
             "status": progress_status,
         })
     
-    return render(request, "practice_problems.html", {"problems": problems_list})
+    # Paginate results (10 per page)
+    paginator = Paginator(problems_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Preserve query parameters except page
+    query_params = request.GET.copy()
+    query_params.pop('page', None)
+    base_querystring = query_params.urlencode()
+
+    return render(request, "practice_problems.html", {
+        "problems": page_obj,
+        "page_obj": page_obj,
+        "base_querystring": base_querystring,
+    })
 
 @login_required
 def my_progress(request):
