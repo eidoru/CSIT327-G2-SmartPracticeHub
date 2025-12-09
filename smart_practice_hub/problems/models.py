@@ -24,7 +24,20 @@ class Problem(models.Model):
     topic = models.CharField(max_length=100)
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES)
     problem_text = models.TextField()
-    solution = models.TextField()
+    solution = models.TextField(help_text="Detailed solution/guide shown to students")
+    correct_answer = models.TextField(
+        help_text="Exact answer used for auto-grading",
+        blank=True,
+        default=""
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='problems_created',
+        null=True,
+        blank=True,
+        help_text="Teacher who authored the problem"
+    )
     # created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='problems')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -51,6 +64,9 @@ class Problem(models.Model):
         
         if not self.solution or not self.solution.strip():
             raise ValidationError({'solution': 'Solution cannot be empty.'})
+
+        if not self.correct_answer or not self.correct_answer.strip():
+            raise ValidationError({'correct_answer': 'Correct answer cannot be empty.'})
         
         if not self.topic or not self.topic.strip():
             raise ValidationError({'topic': 'Topic cannot be empty.'})
@@ -83,6 +99,7 @@ class Problem(models.Model):
         self.topic = self.topic.strip() if self.topic else ''
         self.problem_text = self.problem_text.strip() if self.problem_text else ''
         self.solution = self.solution.strip() if self.solution else ''
+        self.correct_answer = self.correct_answer.strip() if self.correct_answer else ''
         super().save(*args, **kwargs)
 
 # Add this to your models.py file
