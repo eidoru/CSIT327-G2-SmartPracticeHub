@@ -145,5 +145,29 @@
             </div>
             {% endfor %}
         </div>
+
+        <!-- Pagination -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="px-8 pb-10">
+            <div class="flex items-center justify-between bg-white shadow rounded-2xl px-4 py-3 text-sm text-gray-700">
+                <div>
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+                <div class="flex items-center gap-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% if base_querystring %}{{ base_querystring }}&{% endif %}page={{ page_obj.previous_page_number }}" class="px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-100">Previous</a>
+                    {% else %}
+                        <span class="px-3 py-1 rounded-lg border border-gray-100 text-gray-400">Previous</span>
+                    {% endif %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?{% if base_querystring %}{{ base_querystring }}&{% endif %}page={{ page_obj.next_page_number }}" class="px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-100">Next</a>
+                    {% else %}
+                        <span class="px-3 py-1 rounded-lg border border-gray-100 text-gray-400">Next</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
 </div>
 {% endblock %}
