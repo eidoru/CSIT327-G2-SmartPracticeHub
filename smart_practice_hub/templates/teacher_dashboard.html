@@ -64,6 +64,20 @@
             </div>
         </header>
 
+        <!-- Messages -->
+        {% if messages %}
+        <div class="px-8 pt-4">
+            {% for message in messages %}
+                <div class="mb-4 p-4 rounded-lg 
+                    {% if message.tags == 'success' %}bg-green-100 border border-green-300 text-green-800
+                    {% elif message.tags == 'error' %}bg-red-100 border border-red-300 text-red-800
+                    {% else %}bg-blue-100 border border-blue-300 text-blue-800{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <!-- Title Section -->
         <section class="px-8 py-6">
             <h2 class="text-xl font-semibold text-sky-700">Teacher <span class="text-amber-600">Dashboard</span></h2>
@@ -245,5 +259,49 @@
         </div>
     </main>
 </div>
+
+{% if messages %}
+    {% for message in messages %}
+        {% if 'owner_restricted' in message.tags %}
+            <div id="owner-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+                <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <p class="text-sm uppercase tracking-[0.12em] text-gray-500 font-semibold">Access Restricted</p>
+                            <h3 class="text-xl font-bold text-red-600">You cannot edit or delete this problem</h3>
+                        </div>
+                        <button id="owner-modal-close" class="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+                    </div>
+                    <p class="text-gray-700 mb-4">{{ message }}</p>
+                    <div class="flex gap-3">
+                        <a href="{% url 'teacher_dashboard' %}"
+                           class="flex-1 inline-flex justify-center items-center px-4 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+                            Go back
+                        </a>
+                        <button id="owner-modal-dismiss"
+                                class="flex-1 inline-flex justify-center items-center px-4 py-3 rounded-lg bg-gray-100 text-gray-800 font-semibold hover:bg-gray-200 transition">
+                            Dismiss
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('owner-modal');
+        const closeButtons = [
+            document.getElementById('owner-modal-close'),
+            document.getElementById('owner-modal-dismiss'),
+        ];
+        closeButtons.forEach(btn => {
+            if (btn) btn.addEventListener('click', () => {
+                if (modal) modal.classList.add('hidden');
+            });
+        });
+    });
+</script>
 
 {% endblock %}

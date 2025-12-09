@@ -151,13 +151,25 @@
                         {% endif %}
                     </div>
 
-                    <!-- Solution -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ form.solution.label }}</label>
-                        {{ form.solution }}
-                        {% if form.solution.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ form.solution.errors.0 }}</p>
-                        {% endif %}
+                    <!-- Correct Answer + Solution -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">{{ form.correct_answer.label }}</label>
+                            {{ form.correct_answer }}
+                            <p class="mt-1 text-xs text-gray-500">Used for auto-checking; keep it concise (e.g., "12").</p>
+                            {% if form.correct_answer.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.correct_answer.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">{{ form.solution.label }}</label>
+                            {{ form.solution }}
+                            <p class="mt-1 text-xs text-gray-500">Shown as the worked-out solution/guide.</p>
+                            {% if form.solution.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.solution.errors.0 }}</p>
+                            {% endif %}
+                        </div>
                     </div>
 
                     <!-- Buttons -->
