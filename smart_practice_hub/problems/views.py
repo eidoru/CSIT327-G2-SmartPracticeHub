@@ -9,6 +9,7 @@ from django.db.models import Count, Avg
 import json
 
 from django.utils import timezone
+from django.core.paginator import Paginator
 from .models import Problem, ProblemProgress, PracticeSession
 from .forms import ProblemForm
 from django.shortcuts import render, redirect, get_object_or_404
@@ -27,7 +28,9 @@ def add_problem(request):
         form = ProblemForm(request.POST)
         if form.is_valid():
             try:
-                problem = form.save()
+                problem = form.save(commit=False)
+                problem.created_by = request.user
+                problem.save()
                 messages.success(request, f'Problem "{problem.title}" created successfully!')
                 return redirect('add_problem')
             except Exception as e:
@@ -50,7 +53,7 @@ def create_problem_api(request):
     try:
         data = json.loads(request.body) if request.content_type == 'application/json' else request.POST.dict()
 
-        required_fields = ['title', 'subject', 'points', 'topic', 'difficulty', 'problem_text', 'solution']
+        required_fields = ['title', 'subject', 'points', 'topic', 'difficulty', 'problem_text', 'correct_answer', 'solution']
         missing = [f for f in required_fields if not data.get(f)]
 
         if missing:
@@ -81,6 +84,7 @@ def create_problem_api(request):
             topic=data['topic'],
             difficulty=data['difficulty'],
             problem_text=data['problem_text'],
+            correct_answer=data['correct_answer'],
             solution=data['solution']
         )
 
@@ -114,7 +118,7 @@ def update_problem_api(request, id):
         data = json.loads(request.body)
 
         # Only update fields that were provided
-        for field in ['title', 'subject', 'points', 'topic', 'difficulty', 'problem_text', 'solution']:
+        for field in ['title', 'subject', 'points', 'topic', 'difficulty', 'problem_text', 'correct_answer', 'solution']:
             if field in data:
                 if field == "points":
                     try:
@@ -173,6 +177,15 @@ def update_problem(request, id):
 
     problem = get_object_or_404(Problem, id=id)
 
+    # Only creator can edit
+    if problem.created_by and problem.created_by != request.user:
+        messages.error(
+            request,
+            "You cannot edit this problem. Only the teacher who created it can edit or delete it.",
+            extra_tags="owner_restricted"
+        )
+        return redirect('teacher_dashboard')
+
     if request.method == "POST":
         form = ProblemForm(request.POST, instance=problem)
         if form.is_valid():
@@ -198,6 +211,15 @@ def delete_problem(request, id):
 
     problem = get_object_or_404(Problem, id=id)
 
+    # Only creator can delete
+    if problem.created_by and problem.created_by != request.user:
+        messages.error(
+            request,
+            "You cannot delete this problem. Only the teacher who created it can edit or delete it.",
+            extra_tags="owner_restricted"
+        )
+        return redirect('teacher_dashboard')
+
     if request.method == "POST":
         problem.delete()
         messages.success(request, "Problem deleted successfully!")
@@ -210,11 +232,44 @@ def delete_problem(request, id):
 @login_required
 def answer_problem(request, id):
     problem = get_object_or_404(Problem, id=id)
-    
+
+    def normalize_answer(value: str) -> str:
+        """
+        Normalize answers by:
+        - NFC normalization, then removing accents (strip diacritics)
+        - removing punctuation
+        - converting to lowercase
+        - stripping leading/trailing whitespace
+        - collapsing multiple internal spaces
+        """
+        if not value:
+            return ""
+
+        import unicodedata
+        import string
+
+        # Normalize unicode and strip accents
+        normalized = unicodedata.normalize("NFD", value)
+        without_accents = "".join(
+            ch for ch in normalized
+            if unicodedata.category(ch) != "Mn"
+        )
+
+        # Remove punctuation
+        punctuation_table = str.maketrans("", "", string.punctuation)
+        no_punct = without_accents.translate(punctuation_table)
+
+        # Lowercase, trim, and collapse spaces
+        return " ".join(no_punct.strip().lower().split())
+
     context = {
         "problem": problem,
         "student_answer": "",
-        "show_solution": False
+        "show_solution": False,
+        "show_result": False,
+        "is_correct": None,
+        "score": None,
+        "max_score": problem.points,
     }
 
     if request.method == "POST":
@@ -228,8 +283,9 @@ def answer_problem(request, id):
         student_answer = request.POST.get("answer", "")
         context["student_answer"] = student_answer
 
-        # Compare answer (case-insensitive and stripped)
-        is_correct = student_answer.strip().lower() == problem.solution.strip().lower()
+        # Compare answer (normalized: case-insensitive and whitespace-tolerant)
+        answer_key = problem.correct_answer or problem.solution
+        is_correct = normalize_answer(student_answer) == normalize_answer(answer_key)
 
         # Get or create ProblemProgress record
         progress, created = ProblemProgress.objects.get_or_create(
@@ -254,13 +310,20 @@ def answer_problem(request, id):
             user=request.user,
             problem=problem,
             was_correct=is_correct,
-            answer_given=student_answer
+            answer_given=student_answer,
+            ended_at=timezone.now()
         )
 
         if is_correct:
             messages.success(request, "Correct! 🎉 Great job!")
         else:
             messages.error(request, "Incorrect ❌ Try again!")
+
+        context.update({
+            "show_result": True,
+            "is_correct": is_correct,
+            "score": problem.points if is_correct else 0,
+        })
 
         return render(request, "problems/answer_problem.html", context)
 
@@ -351,12 +414,22 @@ def my_progress(request):
     recent_sessions = PracticeSession.objects.filter(
         user=user
     ).select_related('problem').order_by('-started_at')[:10]
+
+    # History table - paginated (timestamps + correctness)
+    history_qs = PracticeSession.objects.filter(
+        user=user
+    ).select_related('problem').order_by('-started_at')
+
+    history_paginator = Paginator(history_qs, 10)
+    history_page_number = request.GET.get('history_page')
+    history_page_obj = history_paginator.get_page(history_page_number)
     
     context = {
         'stats': stats,
         'user_progress': user_progress[:10],  # Show last 10
         'quick_practice': quick_practice,
         'recent_sessions': recent_sessions,
+        'history_page_obj': history_page_obj,
         'subject_stats': subject_stats,
     }
     

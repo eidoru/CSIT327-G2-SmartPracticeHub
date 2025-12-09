@@ -2,17 +2,17 @@
 {% block title %}My Progress{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+<div class="min-h-screen bg-gray-50">
     <!-- Header -->
-    <header class="flex justify-between items-center px-8 py-4 bg-white shadow-md">
+    <header class="flex justify-between items-center px-8 py-4 bg-white shadow">
         <a href="{% url 'home' %}" class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-2xl font-extrabold text-transparent hover:opacity-80 transition-opacity duration-200">
             Smart Practice Hub
         </a>
         <div class="flex items-center gap-5">
-            <h2 class="text-md">🧑‍🎓 <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent">{{ user.first_name }}</span></h2>
+            <h2 class="text-md">🧑‍🎓 <span class="font-extrabold bg-gradient-to-r from-amber-500 via-blue-500 to-yellow-500 bg-clip-text text-transparent">{{ user.first_name }}</span></h2>
             <div class="h-6 border-l border-gray-300"></div>
             <a href="{% url 'practice_problems' %}" 
-                class="group relative inline-flex items-center gap-1 text-sky-600 text-xl font-semibold transition-all duration-300 hover:text-sky-800 hover:scale-105"
+                class="group relative inline-flex items-center gap-1 text-blue-600 text-xl font-semibold transition-all duration-300 hover:text-blue-800 hover:scale-105"
                 title="Practice Problems">
                 <span class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-transparent group-hover:from-yellow-500 group-hover:to-blue-500 transition-all duration-300">
                     Practice Problems
@@ -37,10 +37,10 @@
     <!-- Title Section -->
     <section class="px-8 py-8">
         <div class="flex items-center gap-3 mb-2">
-            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
-            <h2 class="text-3xl font-bold text-gray-800">My <span class="text-indigo-600">Progress</span></h2>
+            <h2 class="text-3xl font-bold text-gray-800">My <span class="text-blue-600">Progress</span></h2>
         </div>
         <p class="text-gray-600 ml-11">Track your learning journey and achievements</p>
     </section>
@@ -83,8 +83,8 @@
         <!-- Quick Practice Section -->
         <div class="bg-white shadow-lg rounded-2xl p-6 lg:col-span-2 border border-gray-100">
             <div class="flex items-center gap-3 mb-6">
-                <div class="bg-green-100 rounded-lg p-2">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-blue-100 rounded-lg p-2">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
                 </div>
@@ -112,7 +112,7 @@
                         </span>
                     </p>
                     <a href="{% url 'practice_problems' %}" 
-                       class="block w-full text-center bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                       class="block w-full text-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
                         Practice Now
                     </a>
                 </div>
@@ -161,8 +161,8 @@
         <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="bg-purple-100 rounded-lg p-2">
-                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-blue-100 rounded-lg p-2">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                     </div>
@@ -220,7 +220,7 @@
                             </div>
                         </div>
                         <a href="{% url 'answer_problem' progress.problem.id %}" 
-                           class="flex-shrink-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-md">
+                           class="flex-shrink-0 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-md">
                             {% if progress.status == 'completed' %}Review{% else %}Continue{% endif %}
                         </a>
                     </div>
@@ -238,6 +238,72 @@
                     Start Practicing
                 </a>
             </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="px-8 pb-10">
+        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="bg-amber-100 rounded-lg p-2">
+                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl text-gray-800">History</h3>
+            </div>
+
+            {% if history_page_obj %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-gray-600 border-b">
+                            <th class="py-3 pr-4">Problem</th>
+                            <th class="py-3 pr-4">Date</th>
+                            <th class="py-3 pr-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        {% for session in history_page_obj %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-3 pr-4 text-gray-800 font-medium">{{ session.problem.title }}</td>
+                            <td class="py-3 pr-4 text-gray-600">{{ session.started_at|date:"M d, Y H:i" }}</td>
+                            <td class="py-3 pr-4">
+                                {% if session.was_correct %}
+                                    <span class="inline-flex items-center text-xs px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold">Correct</span>
+                                {% else %}
+                                    <span class="inline-flex items-center text-xs px-3 py-1 rounded-full bg-red-100 text-red-700 font-semibold">Incorrect</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            {% if history_page_obj.paginator.num_pages > 1 %}
+            <div class="flex items-center justify-between mt-4 text-sm text-gray-700">
+                <div>
+                    Page {{ history_page_obj.number }} of {{ history_page_obj.paginator.num_pages }}
+                </div>
+                <div class="flex items-center gap-2">
+                    {% if history_page_obj.has_previous %}
+                        <a href="?history_page={{ history_page_obj.previous_page_number }}" class="px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-100">Previous</a>
+                    {% else %}
+                        <span class="px-3 py-1 rounded-lg border border-gray-100 text-gray-400">Previous</span>
+                    {% endif %}
+
+                    {% if history_page_obj.has_next %}
+                        <a href="?history_page={{ history_page_obj.next_page_number }}" class="px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-100">Next</a>
+                    {% else %}
+                        <span class="px-3 py-1 rounded-lg border border-gray-100 text-gray-400">Next</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <p class="text-gray-500 text-sm">No history yet.</p>
             {% endif %}
         </div>
     </div>
