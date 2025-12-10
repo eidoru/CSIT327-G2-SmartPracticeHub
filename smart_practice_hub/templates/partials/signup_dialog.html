@@ -1,0 +1,78 @@
+<dialog id="signupDialog" closedby="any" class="m-auto rounded-md px-8 py-16 w-lg shadow-md backdrop:bg-black/50">
+    <div>
+        <p class="block text-3xl text-center font-bold">Create an account!</p>
+        <p class="mt-2 block text-md text-black/50 text-center">Already have an account?
+            <span id="loginButtonSignupDialog"
+                class="text-blue-500 font-medium hover:text-blue-600 active:text-blue-700 cursor-pointer">
+                Log in
+            </span>
+        </p>
+    </div>
+    <form method="POST" action="{% url 'signup' %}" class="mt-8">
+        {% csrf_token %}
+        <div>
+            <label for="email" class="block text-md font-medium">
+                Email address
+            </label>
+            <input id="email" name="email" type="email" required
+                class="mt-2 w-full rounded-md px-2.5 py-2 text-md outline-none ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mt-2 flex gap-x-4">
+            <div>
+                <label for="first_name" class="block text-md font-medium">
+                    First name
+                </label>
+                <input id="first_name" name="first_name" type="text" required
+                    class="mt-2 w-full rounded-md px-2.5 py-2 text-md outline-none ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="last_name" class="block text-md font-medium">
+                    Last name
+                </label>
+                <input id="last_name" name="last_name" type="text" required
+                    class="mt-2 w-full rounded-md px-2.5 py-2 text-md outline-none ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <label for="password1" class="block text-md font-medium">
+                Password
+            </label>
+            <input id="password1" name="password1" type="password" required
+                class="mt-2 w-full rounded-md px-2.5 py-2 text-md outline-none ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mt-2">
+            <label for="password2" class="block text-md font-medium">
+                Confirm password
+            </label>
+            <input id="password2" name="password2" type="password" required
+                class="mt-2 w-full rounded-md px-2.5 py-2 text-md outline-none ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mt-2">
+            <label for="role" class="block text-md font-medium">
+                Role
+            </label>
+            <div class="relative mt-2">
+                <select name="role" id="role"
+                    class="appearance-none w-full rounded-md px-2.5 py-2 text-md outline-none ring-1 ring-inset ring-gray-300">
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+                <div class="pointer-events-none absolute right-0 inset-y-0 flex items-center px-2 text-gray-700">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit"
+            class="mt-8 w-full rounded-md px-3 py-2 text-md font-medium text-white bg-blue-500 hover:bg-blue-600 active:bg-blue-700 cursor-pointer">
+            Sign up
+        </button>
+    </form>
+</dialog>

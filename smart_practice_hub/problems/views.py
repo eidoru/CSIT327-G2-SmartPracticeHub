@@ -1,29 +1,27 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.contrib import messages
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
-from django.db.models import Count, Avg
 import json
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Avg
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from django.utils import timezone
+
 from django.core.paginator import Paginator
-from .models import Problem, ProblemProgress, PracticeSession
+
 from .forms import ProblemForm
-from django.shortcuts import render, redirect, get_object_or_404
+from .models import Problem, ProblemProgress, PracticeSession
+
+from accounts.decorators import teacher_required
 
 
-
-# ----------------------------------------------------
-# Regular form view (unchanged)
-# ----------------------------------------------------
-@login_required
+@teacher_required
 def add_problem(request):
-    if request.user.role != 'teacher':
-        raise PermissionDenied("Only teachers can add problems.")
-    
     if request.method == 'POST':
         form = ProblemForm(request.POST)
         if form.is_valid():
@@ -43,10 +41,6 @@ def add_problem(request):
     return render(request, 'problems/add_problem.html', {'form': form})
 
 
-# ----------------------------------------------------
-# API: Create Problem
-# /api/problems/create
-# ----------------------------------------------------
 @csrf_exempt
 @require_http_methods(["POST"])
 def create_problem_api(request):
@@ -101,11 +95,6 @@ def create_problem_api(request):
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 
-
-# ----------------------------------------------------
-# API: Update Problem
-# /api/problems/<id>/update
-# ----------------------------------------------------
 @csrf_exempt
 @require_http_methods(["PUT", "PATCH"])
 def update_problem_api(request, id):
@@ -144,12 +133,7 @@ def update_problem_api(request, id):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
-
-
-# ----------------------------------------------------
-# API: Delete Problem
-# /api/problems/<id>/delete
-# ----------------------------------------------------
+@csrf_exempt
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def delete_problem_api(request, id):
@@ -165,11 +149,7 @@ def delete_problem_api(request, id):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
-        from django.shortcuts import get_object_or_404
-from django.core.exceptions import PermissionDenied
-
-
-@login_required
+@teacher_required
 def update_problem(request, id):
     # Only teachers can edit
     if request.user.role != 'teacher':
@@ -203,7 +183,7 @@ def update_problem(request, id):
     })
 
 
-@login_required
+@teacher_required
 def delete_problem(request, id):
     # Only teachers can delete
     if request.user.role != 'teacher':
@@ -227,6 +207,7 @@ def delete_problem(request, id):
 
     # If someone tries to GET this URL
     return redirect('teacher_dashboard')
+
 
 #Answering Problems
 @login_required
@@ -262,17 +243,31 @@ def answer_problem(request, id):
         # Lowercase, trim, and collapse spaces
         return " ".join(no_punct.strip().lower().split())
 
+    # Get or create ProblemProgress record
+    progress, created = ProblemProgress.objects.get_or_create(
+        student=request.user,
+        problem=problem
+    )
+
+    # If this is the first time viewing this problem, mark as in_progress
+    if created or progress.status == 'not_started':
+        progress.status = 'in_progress'
+        progress.save()
+
+    already_completed = progress.status == 'completed'
+
     context = {
         "problem": problem,
-        "student_answer": "",
+        "student_answer": progress.student_answer if already_completed else "",
         "show_solution": False,
         "show_result": False,
-        "is_correct": None,
-        "score": None,
+        "is_correct": progress.is_correct if already_completed else None,
+        "score": problem.points if (already_completed and progress.is_correct) else None,
         "max_score": problem.points,
+        "already_completed": already_completed,
     }
 
-    if request.method == "POST":
+    if request.method == "POST" and not already_completed:
         # Check if user wants to see solution
         if request.POST.get("show_solution"):
             context["show_solution"] = True
@@ -287,25 +282,14 @@ def answer_problem(request, id):
         answer_key = problem.correct_answer or problem.solution
         is_correct = normalize_answer(student_answer) == normalize_answer(answer_key)
 
-        # Get or create ProblemProgress record
-        progress, created = ProblemProgress.objects.get_or_create(
-            student=request.user,
-            problem=problem
-        )
-        
         # Update progress
         progress.student_answer = student_answer
         progress.is_correct = is_correct
         progress.attempts += 1
-        progress.status = 'completed' if is_correct else 'in_progress'
+        progress.status = 'completed'  # Mark as completed once they submit an answer
+        progress.completed_at = timezone.now()
         
-        if is_correct:
-            from django.utils import timezone
-            progress.completed_at = timezone.now()
-        
-        progress.save()
-        
-        # Create a PracticeSession record
+        # Create a PracticeSession record for both correct and incorrect answers
         PracticeSession.objects.create(
             user=request.user,
             problem=problem,
@@ -313,11 +297,13 @@ def answer_problem(request, id):
             answer_given=student_answer,
             ended_at=timezone.now()
         )
-
+        
         if is_correct:
             messages.success(request, "Correct! 🎉 Great job!")
         else:
             messages.error(request, "Incorrect ❌ Try again!")
+
+        progress.save()
 
         context.update({
             "show_result": True,
@@ -325,6 +311,7 @@ def answer_problem(request, id):
             "score": problem.points if is_correct else 0,
         })
 
+        # Render with result modal (user will see it then navigate back)
         return render(request, "problems/answer_problem.html", context)
 
     return render(request, "problems/answer_problem.html", context)
@@ -344,9 +331,12 @@ def my_progress(request):
     # Calculate statistics
     total_attempted = user_progress.count()
     total_completed = user_progress.filter(status='completed', is_correct=True).count()
-    in_progress = user_progress.filter(status='in_progress').count()
+    # Calculate statistics
+    # Calculate statistics
+    total_attempted = user_progress.count()
+    total_completed = user_progress.filter(status='completed', is_correct=True).count()
     total_problems = Problem.objects.count()
-    
+    in_progress = user_progress.filter(status='in_progress').count()
     # Calculate completion percentage
     completion_percentage = (total_completed / total_problems * 100) if total_problems > 0 else 0
     
@@ -389,8 +379,8 @@ def my_progress(request):
             'subtext': 'Per problem'
         }
     ]
-    
-    # Quick practice suggestions - subjects with available problems
+
+    # Quick practice: show unsolved problems per subject
     quick_practice = []
     for subject, _ in Problem.SUBJECT_CHOICES:
         problems_count = Problem.objects.filter(subject=subject).count()
@@ -409,7 +399,7 @@ def my_progress(request):
                 'problem_count': problems_count - solved_count,
                 'last_practiced': last_practiced.last_attempted_at.strftime('%b %d, %Y') if last_practiced else 'Never'
             })
-    
+
     # Recent activity - last 10 practice sessions
     recent_sessions = PracticeSession.objects.filter(
         user=user

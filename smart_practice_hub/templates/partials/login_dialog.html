@@ -1,0 +1,34 @@
+<dialog id="loginDialog" closedby="any" class="m-auto rounded-md px-8 py-16 w-lg shadow-md backdrop:bg-black/50">
+    <div>
+        <p class="block text-3xl text-center font-bold">Welcome back!</p>
+        <p class="mt-2 block text-md text-black/50 text-center">Don't have an account yet?
+            <span id="signupButtonLoginDialog"
+                class="text-blue-500 font-medium hover:text-blue-600 active:text-blue-700 cursor-pointer">
+                Sign up
+            </span>
+        </p>
+    </div>
+    <form method="POST" action="{% url 'login' %}" class="mt-8">
+        {% csrf_token %}
+        <div>
+            <label for="username" class="block text-md font-medium">
+                Email address
+            </label>
+            <input id="username" name="username" type="email" required
+                class="mt-2 w-full rounded-md px-2.5 py-2 text-md outline-none ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mt-2">
+            <label for="password" class="block text-md font-medium">
+                Password
+            </label>
+            <input id="password" name="password" type="password" required
+                class="mt-2 w-full rounded-md px-2.5 py-2 text-md outline-none ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <button type="submit"
+            class="mt-8 w-full rounded-md px-3 py-2 text-md font-medium text-white bg-blue-500 hover:bg-blue-600 active:bg-blue-700 cursor-pointer">
+            Log in
+        </button>
+    </form>
+</dialog>

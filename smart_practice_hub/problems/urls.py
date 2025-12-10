@@ -1,10 +1,12 @@
 from django.urls import path
+
 from . import views
 
+
 urlpatterns = [
-    path('add/', views.add_problem, name='add_problem'),
-    path('edit/<int:id>/', views.update_problem, name='edit_problem'),
-    path('delete/<int:id>/', views.delete_problem, name='delete_problem'),
+    path('teacher/problems/add/', views.add_problem, name='add_problem'),
+    path('teacher/problems/edit/<int:id>/', views.update_problem, name='edit_problem'),
+    path('teacher/problems/delete/<int:id>/', views.delete_problem, name='delete_problem'),
 
     # API routes
     path('api/create/', views.create_problem_api, name='create_problem_api'),

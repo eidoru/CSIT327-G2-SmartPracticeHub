@@ -58,6 +58,21 @@
                     </div>
                 </div>
 
+                <!-- Solution Guide (always visible) -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-amber-500 text-white rounded-full p-2 flex-shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Solution Guide</h3>
+                            <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ problem.solution }}</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Messages -->
                 {% if messages %}
                     <div class="space-y-3">
@@ -86,6 +101,7 @@
                     </div>
                 {% endif %}
 
+                {% if not already_completed %}
                 <!-- Answer Form -->
                 <form method="POST" class="space-y-5">
                     {% csrf_token %}
@@ -130,26 +146,34 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                 </svg>
-                                Show Solution
+                                Show Correct Answer
                             </span>
                         </button>
                     </div>
                 </form>
+                {% else %}
+                <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 text-center">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">You have already answered this problem.</h3>
+                    <p class="text-gray-600 mb-2">Your answer: <span class="font-semibold">{{ student_answer }}</span></p>
+                    <p class="text-gray-600 mb-2">Score: <span class="font-semibold">{{ score }}</span> / {{ max_score }} pts</p>
+                    <p class="text-gray-600">You can review the solution below.</p>
+                </div>
+                {% endif %}
 
-                <!-- Solution Display -->
-                {% if show_solution %}
-                    <div class="bg-gradient-to-br from-yellow-50 to-amber-50 border-l-4 border-yellow-500 rounded-xl p-6 shadow-lg animate-fadeIn">
+                <!-- Correct Answer Reveal -->
+                {% if show_solution or show_result or already_completed %}
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-xl p-6 shadow-lg animate-fadeIn">
                         <div class="flex items-start gap-3">
-                            <div class="bg-yellow-500 text-white rounded-full p-2 flex-shrink-0">
+                            <div class="bg-green-500 text-white rounded-full p-2 flex-shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
                             </div>
                             <div class="flex-1">
                                 <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
-                                    Solution & Explanation
+                                    Correct Answer
                                 </h3>
-                                <p class="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">{{ problem.solution }}</p>
+                                <p class="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">{{ problem.correct_answer }}</p>
                             </div>
                         </div>
                     </div>
@@ -176,7 +200,7 @@
                 </li>
                 <li class="flex items-start gap-2">
                     <span class="text-blue-500 mt-0.5">•</span>
-                    <span>If stuck, use "Show Solution" to learn the approach.</span>
+                    <span>If stuck, use "Show Correct Answer" to see the correct answer and learn the approach.</span>
                 </li>
             </ul>
         </div>
@@ -233,6 +257,14 @@
     document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('result-modal');
         const closeButtons = [document.getElementById('close-result'), document.getElementById('close-result-cta')];
+        
+        // Auto-redirect after 5 seconds if result modal exists
+        if (modal) {
+            setTimeout(() => {
+                window.location.href = "{% url 'practice_problems' %}";
+            }, 5000);
+        }
+        
         closeButtons.forEach(btn => {
             if (btn) {
                 btn.addEventListener('click', () => {
@@ -240,6 +272,23 @@
                 });
             }
         });
+        
+        // Add click handler to "Back to Problems" button in modal
+        const backButton = modal?.querySelector('a[href*="practice_problems"]');
+        if (backButton) {
+            backButton.addEventListener('click', (e) => {
+                // Let the link work normally
+            });
+        }
+        
+        // Add click handler to "Try Again" button
+        const tryAgainButton = document.getElementById('close-result-cta');
+        if (tryAgainButton) {
+            tryAgainButton.addEventListener('click', () => {
+                // Refresh current page
+                window.location.reload();
+            });
+        }
     });
 </script>
 
