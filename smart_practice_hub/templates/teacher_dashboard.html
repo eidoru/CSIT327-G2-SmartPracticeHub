@@ -7,8 +7,8 @@
     <!-- Sidebar -->
     <aside class="w-64 bg-white shadow-md flex flex-col">
         <div class="px-6 py-4 border-b">
-            <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-transparent">
-                Smart Practice Hub
+            <h2 class="text-5xl font-bold text-white">
+                  .
             </h2>
         </div>
 
@@ -22,21 +22,11 @@
             <a href="{% url 'practice_problems' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
                 📚 View Problems
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
+            <a href="{% url 'teacher_students' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
                 👩‍🏫 Students
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
-                ⚙️ Settings
             </a>
         </nav>
 
-        <!-- Logout -->
-        <form action="{% url 'logout' %}" method="post" class="p-4 border-t">
-            {% csrf_token %}
-            <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-red-50 hover:text-red-600 transition">
-                🚪 Logout
-            </button>
-        </form>
     </aside>
 
     <!-- Main Content -->
@@ -47,7 +37,14 @@
                 Smart Practice Hub
             </a>
             <div class="flex items-center gap-5">
-                <h2 class="text-md">👨‍🏫 <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent">{{ user.get_full_name|default:user.email }}</span></h2>
+                <h2 class="text-md flex items-center gap-4">
+                    {% if user.role == 'teacher' %}
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold bg-indigo-100 text-indigo-800" aria-hidden="true">Teacher 👨‍🏫</span>
+                    {% else %}
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold bg-amber-100 text-amber-800" aria-hidden="true">Student 🧑‍🎓</span>
+                    {% endif %}
+                    <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent text-lg">{{ user.get_full_name|default:user.email }}</span>
+                </h2>
                 <div class="h-6 border-l border-gray-300"></div>
                 <form action="{% url 'logout' %}" method="post" class="flex items-center">
                     {% csrf_token %}

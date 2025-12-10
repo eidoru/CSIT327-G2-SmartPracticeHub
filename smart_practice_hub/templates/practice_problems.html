@@ -10,35 +10,30 @@
             </a>
             <div class="flex items-center gap-5">
                 {% if user.is_authenticated %}
-                    <h2 class="text-md">
+                    <h2 class="text-md flex items-center gap-4">
                         {% if user.role == 'teacher' %}
-                            👨‍🏫
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold bg-indigo-100 text-indigo-800" aria-hidden="true">
+                            Teacher 👨‍🏫
+                        </span>
                         {% else %}
-                            🧑‍🎓
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold bg-amber-100 text-amber-800" aria-hidden="true">
+                            Student 🧑‍🎓
+                        </span>
                         {% endif %}
-                        <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent">{{ user.first_name }}</span>
-                    </h2>
+                        <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent text-lg">{{ user.first_name }} {{ user.last_name }}</span>
                     <div class="h-6 border-l border-gray-300"></div>
-                    
-                    {% if user.role == 'student' %}
+                        {% if user.role == 'student' %}
                         <!-- Student Navigation -->
                         <a href="{% url 'my_progress' %}" 
                             class="group relative inline-flex items-center gap-1 text-sky-600 text-xl font-semibold transition-all duration-300 hover:text-sky-800 hover:scale-105"
-                            title="My Progress">
+                            title="My Progress">    
                             <span class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-transparent group-hover:from-yellow-500 group-hover:to-blue-500 transition-all duration-300">
-                                View Progress
+                                View My Progress
                             </span>🎓
                         </a>
-                    {% elif user.role == 'teacher' %}
-                        <!-- Teacher Navigation -->
-                        <a href="{% url 'teacher_dashboard' %}" 
-                            class="group relative inline-flex items-center gap-1 text-sky-600 text-xl font-semibold transition-all duration-300 hover:text-sky-800 hover:scale-105"
-                            title="Teacher Dashboard">
-                            <span class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-transparent group-hover:from-yellow-500 group-hover:to-blue-500 transition-all duration-300">
-                                Teacher Dashboard
-                            </span>👨‍🏫
-                        </a>
                     {% endif %}
+                    </h2>
+
                     
                     <div class="flex items-center space-x-4">
                         <div class="h-6 border-l border-gray-300"></div>
@@ -59,6 +54,31 @@
             </div>
         </header>
 
+    
+
+
+    <div class="flex">
+        {% if user.is_authenticated and user.role == 'teacher' %}
+        <aside class="w-64 bg-white shadow-md flex flex-col">
+
+            <nav class="flex-1 p-4 space-y-3 text-gray-700">
+                <a href="{% url 'teacher_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
+                    🏠 Dashboard
+                </a>
+                <a href="{% url 'add_problem' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
+                    ➕ Add Problem
+                </a>
+                <a href="{% url 'practice_problems' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 font-medium">
+                📚 View Problems
+            </a>
+                <a href="{% url 'teacher_students' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
+                    👩‍🏫 Students
+                </a>
+            </nav>
+        </aside>
+        {% endif %}
+
+        <main class="flex-1">
 
     <!-- Title -->
     <section class="px-8 py-6">
@@ -145,5 +165,7 @@
             </div>
             {% endfor %}
         </div>
-</div>
+        </main>
+        </div>
+    </div>
 {% endblock %}

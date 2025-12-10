@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Registered Students{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-gray-50">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md flex flex-col">
+        <div class="px-6 py-4 border-b">
+            <h2 class="text-5xl font-bold text-white">
+                  .
+            </h2>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-3 text-gray-700">
+            <a href="{% url 'teacher_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
+                🏠 Dashboard
+            </a>
+            <a href="{% url 'add_problem' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
+                ➕ Add Problem
+            </a>
+            <a href="{% url 'practice_problems' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 font-medium">
+                📚 View Problems
+            </a>
+            <a href="{% url 'teacher_students' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 font-medium">
+                    👩‍🏫 Students
+                </a>
+        </nav>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        <!-- Header -->
+        <header class="flex justify-between items-center px-8 py-4 bg-white shadow">
+            <a href="{% url 'home' %}" class="bg-gradient-to-r from-blue-500 to-yellow-500 bg-clip-text text-2xl font-extrabold text-transparent hover:opacity-80 transition-opacity duration-200">
+                Smart Practice Hub
+            </a>
+            <div class="flex items-center gap-5">
+                <h2 class="text-md flex items-center gap-4">
+                    {% if user.role == 'teacher' %}
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold bg-indigo-100 text-indigo-800" aria-hidden="true">Teacher 👨‍🏫</span>
+                    {% else %}
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold bg-amber-100 text-amber-800" aria-hidden="true">Student 🧑‍🎓</span>
+                    {% endif %}
+                    <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent text-lg">{{ user.get_full_name|default:user.email }}</span>
+                </h2>
+                <div class="h-6 border-l border-gray-300"></div>
+                <form action="{% url 'logout' %}" method="post" class="flex items-center">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="flex items-center gap-2 px-4 py-2 text-gray-700 font-medium rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                        </svg>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </header>
+
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-6xl mx-auto px-6 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Registered Students</h1>
+            <a href="{% url 'teacher_dashboard' %}" class="text-sm text-gray-600 hover:underline">Back to Dashboard</a>
+        </div>
+
+        {% if students %}
+            <div class="bg-white rounded-2xl shadow p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for s in students %}
+                    <div class="border rounded-lg p-4 flex items-center justify-between">
+                        <div>
+                            <p class="font-semibold text-gray-800">{{ s.get_full_name }}</p>
+                            <p class="text-sm text-gray-600">{{ s.email }}</p>
+                        </div>
+                        <div class="text-sm text-gray-500">Joined: {{ s.date_joined|date:"M d, Y" }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <p class="text-gray-600">No students registered yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

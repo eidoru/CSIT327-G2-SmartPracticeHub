@@ -9,7 +9,14 @@
             Smart Practice Hub
         </a>
         <div class="flex items-center gap-5">
-            <h2 class="text-md">🧑‍🎓 <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent">{{ user.first_name }}</span></h2>
+            <h2 class="text-md flex items-center gap-4">
+                {% if user.role == 'teacher' %}
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold bg-indigo-100 text-indigo-800">Teacher 👨‍🏫</span>
+                {% else %}
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-lg font-semibold bg-amber-100 text-amber-800">Student 🧑‍🎓</span>
+                {% endif %}
+                <span class="font-extrabold bg-gradient-to-r from-amber-500 via-teal-600 to-indigo-400 bg-clip-text text-transparent text-lg">{{ user.first_name }} {{ user.last_name }}</span>
+            </h2>
             <div class="h-6 border-l border-gray-300"></div>
             <a href="{% url 'practice_problems' %}" 
                 class="group relative inline-flex items-center gap-1 text-sky-600 text-xl font-semibold transition-all duration-300 hover:text-sky-800 hover:scale-105"

@@ -15,6 +15,8 @@ from datetime import timedelta
 
 from .forms import CustomUserCreationForm
 from .forms import CustomAuthenticationForm
+from .models import CustomUser
+from django.contrib.auth.decorators import login_required
 
 class CustomSignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -240,4 +242,18 @@ def teacher_dashboard(request):
     }
     
     return render(request, "teacher_dashboard.html", context)
+
+
+@login_required
+def teacher_students(request):
+    # Only teachers should access this
+    if request.user.role != 'teacher':
+        raise PermissionDenied("Only teachers can view registered students.")
+
+    # List all students
+    students = CustomUser.objects.filter(role='student').order_by('first_name', 'last_name')
+
+    return render(request, 'teacher_students.html', {
+        'students': students,
+    })
 
