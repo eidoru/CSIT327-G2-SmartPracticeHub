@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% block title %}Edit Problem - Smart Practice Hub{% endblock %}
+
+{% block content %}
+
+<!-- Form -->
+<div class="px-8 py-6">
+    <div class="bg-white shadow rounded-2xl p-8 max-w-4xl mx-auto">
+        <!-- Django Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-6 p-4 rounded-lg 
+                    {% if message.tags == 'success' %}
+                        bg-green-100 border border-green-400 text-green-700
+                    {% elif message.tags == 'error' %}
+                        bg-red-100 border border-red-400 text-red-700
+                    {% else %}
+                        bg-blue-100 border border-blue-400 text-blue-700
+                    {% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Title + Subject -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-md font-medium text-gray-700 mb-2">{{ form.title.label }}</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <p class="mt-1 text-md text-red-600">{{ form.title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-md font-medium text-gray-700 mb-2">{{ form.subject.label }}</label>
+                    {{ form.subject }}
+                    {% if form.subject.errors %}
+                        <p class="mt-1 text-md text-red-600">{{ form.subject.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Points + Difficulty -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-md font-medium text-gray-700 mb-2">{{ form.points.label }}</label>
+                    {{ form.points }}
+                    {% if form.points.errors %}
+                        <p class="mt-1 text-md text-red-600">{{ form.points.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-md font-medium text-gray-700 mb-2">{{ form.difficulty.label }}</label>
+                    {{ form.difficulty }}
+                    {% if form.difficulty.errors %}
+                        <p class="mt-1 text-md text-red-600">{{ form.difficulty.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Topic -->
+            <div>
+                <label class="block text-md font-medium text-gray-700 mb-2">{{ form.topic.label }}</label>
+                {{ form.topic }}
+                {% if form.topic.errors %}
+                    <p class="mt-1 text-md text-red-600">{{ form.topic.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Problem Type -->
+            <div>
+                <label class="block text-md font-medium text-gray-700 mb-2">{{ form.problem_type.label }}</label>
+                {{ form.problem_type }}
+                {% if form.problem_type.errors %}
+                    <p class="mt-1 text-md text-red-600">{{ form.problem_type.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Problem Text -->
+            <div>
+                <label class="block text-md font-medium text-gray-700 mb-2">{{ form.problem_text.label }}</label>
+                {{ form.problem_text }}
+                {% if form.problem_text.errors %}
+                    <p class="mt-1 text-md text-red-600">{{ form.problem_text.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Correct Answer + Solution -->
+            <div class="flex flex-col gap-y-6">
+                <div>
+                    <label class="block text-md font-medium text-gray-700 mb-2">{{ form.correct_answer.label }}</label>
+                    {{ form.correct_answer }}
+                    <p class="mt-1 text-xs text-gray-500">Used for auto-checking; keep it concise (e.g., "12").</p>
+                    {% if form.correct_answer.errors %}
+                        <p class="mt-1 text-md text-red-600">{{ form.correct_answer.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-md font-medium text-gray-700 mb-2">{{ form.solution.label }}</label>
+                    {{ form.solution }}
+                    <p class="mt-1 text-xs text-gray-500">Shown as the worked-out solution/guide.</p>
+                    {% if form.solution.errors %}
+                        <p class="mt-1 text-md text-red-600">{{ form.solution.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-4 pt-4 border-t border-gray-200">
+                <button type="submit"
+                    class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105">
+                    Save Changes
+                </button>
+
+                <a href="{% url 'teacher_dashboard' %}"
+                    class="bg-gradient-to-r from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 text-gray-700 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+let choiceCount = 0;
+
+function updateChoicesField() {
+    const choices = [];
+    document.querySelectorAll('.choice-input').forEach(input => {
+        const value = input.value.trim();
+        if (value) choices.push(value);
+    });
+    document.getElementById('id_choices').value = JSON.stringify(choices);
+}
+
+function addChoiceField(value = '') {
+    choiceCount++;
+    const container = document.getElementById('choices_container');
+    
+    const choiceDiv = document.createElement('div');
+    choiceDiv.className = 'choice-item flex gap-3 items-center p-3 hover:bg-gray-50 rounded-lg transition';
+    
+    const label = String.fromCharCode(64 + choiceCount); // A, B, C, etc.
+    
+    choiceDiv.innerHTML = `
+        <div class="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-md">
+            ${label}
+        </div>
+        <div class="flex-1">
+            <input type="text" class="choice-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-md"
+                   placeholder="Enter option ${label}"
+                   value="${value}">
+        </div>
+        <button type="button" class="remove-choice-btn flex-shrink-0 px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition"
+                title="Remove this choice">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    `;
+    
+    choiceDiv.querySelector('.remove-choice-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        choiceDiv.remove();
+        updateChoicesField();
+    });
+    
+    choiceDiv.querySelector('.choice-input').addEventListener('input', updateChoicesField);
+    
+    container.appendChild(choiceDiv);
+    updateChoicesField();
+}
+
+document.getElementById('add_choice_btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    addChoiceField();
+});
+
+document.getElementById('id_problem_type').addEventListener('change', function() {
+    const choicesSection = document.getElementById('choices_section');
+    const container = document.getElementById('choices_container');
+    
+    if (this.value === 'multiple_choice') {
+        choicesSection.classList.remove('hidden');
+        // Add initial choices if container is empty
+        if (container.children.length === 0) {
+            addChoiceField('');
+            addChoiceField('');
+        }
+    } else {
+        choicesSection.classList.add('hidden');
+    }
+});
+
+// Initialize on page load
+window.addEventListener('DOMContentLoaded', function() {
+    const problemTypeSelect = document.getElementById('id_problem_type');
+    const choicesField = document.getElementById('id_choices');
+    
+    if (problemTypeSelect && problemTypeSelect.value === 'multiple_choice') {
+        document.getElementById('choices_section').classList.remove('hidden');
+        
+        // Load existing choices if they exist
+        try {
+            const container = document.getElementById('choices_container');
+            if (choicesField.value) {
+                const choices = JSON.parse(choicesField.value);
+                choices.forEach(choice => addChoiceField(choice));
+            } else {
+                addChoiceField('');
+                addChoiceField('');
+            }
+        } catch (e) {
+            // If not JSON, try parsing as newline-separated
+            if (choicesField.value) {
+                const choices = choicesField.value.split('\n').map(c => c.trim()).filter(c => c);
+                choices.forEach(choice => addChoiceField(choice));
+            } else {
+                addChoiceField('');
+                addChoiceField('');
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

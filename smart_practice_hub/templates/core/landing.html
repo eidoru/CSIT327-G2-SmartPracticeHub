@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="w-md flex justify-between">
+    <div class="flex w-full flex-col">
+        <h1 class="mt-16 text-7xl font-bold">
+            Master
+            <span class="text-blue-500">
+                Math
+            </span>
+            &
+            <span class="text-yellow-500">
+                Science
+            </span>
+            with Smart Practice
+        </h1>
+        <h2 class="mt-8 text-2xl text-gray-600">
+            A comprehensive problem bank designed for teachers and students.
+            Create, practice, and track progress with intelligent analytics.
+        </h2>
+        <div class="mt-8">
+            <a href="{% url 'signup' %}"
+                class="inline-block text-xl font-bold rounded-md bg-blue-500 px-12 py-4 text-white hover:bg-blue-600 text-center">
+                Get Started
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block modal %}
+
+{% include 'partials/login_dialog.html' %}
+
+{% include 'partials/signup_dialog.html' %}
+
+<script src="{% static 'js/landing.js' %}"></script>
+
+{% endblock %}
